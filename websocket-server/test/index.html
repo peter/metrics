@@ -5,7 +5,9 @@
         <h1>Websocket Test Page</h1>
 
         <script>
-            let socket = new WebSocket("ws://localhost:3000/ws");
+            const useHeroku = Boolean(new URLSearchParams(window.location.search).get('heroku'))
+            const url = useHeroku ? "wss://metrics-websocket-server-094fe427096d.herokuapp.com/ws" : "ws://localhost:3000/ws"
+            let socket = new WebSocket(url);
 
             socket.onopen = function(e) {
                 alert("[open] Connection established", e);

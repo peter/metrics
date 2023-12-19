@@ -3,15 +3,39 @@
 ## Development Setup
 
 ```sh
+# Install dependencies
 npm install
+
+# Start local server with hot reload
 npm run dev
 
-curl curl http://localhost:3000/ping
+# Ping server
+curl http://localhost:8080/ping
 ```
 
 ## Deployment
 
-TODO
+Deployed to Heroku at [metrics-api-server-63ea51367e93.herokuapp.com](https://metrics-api-server-63ea51367e93.herokuapp.com) in the EU region (AWS region eu-west-1 / Ireland):
+
+```sh
+# Create Heroku app
+heroku apps:create --region eu metrics-api-server
+
+# Use a remote with a unique name within this repo
+heroku git:remote -a metrics-api-server -r heroku-api-server
+
+# Deploy only the api-server sub directory to Heroku
+git subtree push --prefix api-server heroku-api-server main
+
+# Smoke test websocket on Heroku by opening test/index.html?heroku=true in your browser
+
+# Various useful Heroku commands
+heroku logs --tail -a metrics-api-server
+heroku ps -a metrics-api-server
+heroku info -a metrics-api-server
+heroku config -a metrics-api-server
+heroku run printenv -a metrics-api-server
+```
 
 ## Resources
 

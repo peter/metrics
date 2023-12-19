@@ -9,7 +9,7 @@ npm install
 # Start local server with hot reload
 npm run dev
 
-# Smoke test websocket locally
+# Smoke test websocket connection
 open test/index.html
 ```
 
@@ -24,8 +24,17 @@ heroku apps:create --region eu metrics-websocket-server
 # Use a remote with a unique name within this repo
 heroku git:remote -a metrics-websocket-server -r heroku-websocket-server
 
-# Deploy to Heroku
+# Deploy only the websocket-server sub directory to Heroku
 git subtree push --prefix websocket-server heroku-websocket-server main
+
+# Smoke test websocket on Heroku by opening test/index.html?heroku=true in your browser
+
+# Various useful Heroku commands
+heroku logs --tail -a metrics-websocket-server
+heroku ps -a metrics-websocket-server
+heroku info -a metrics-websocket-server
+heroku config -a metrics-websocket-server
+heroku run printenv -a metrics-websocket-server
 ```
 
 ## Resources
