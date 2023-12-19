@@ -18,14 +18,18 @@ curl http://localhost:8080/ping
 ## Invoking the API with Curl
 
 ```sh
+export LOCAL_BASE_URL=http://localhost:8080
+export PRODUCTION_BASE_URL=https://metrics-api-server-63ea51367e93.herokuapp.com
+export BASE_URL=$LOCAL_BASE_URL
+
 # Create metric
-curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperature"}}' http://localhost:8080/metrics
+curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperature"}}' $BASE_URL/metrics
 
 # Set metric value
-curl -X PUT http://localhost:8080/metric-values/temperature/4
+curl -X PUT $BASE_URL/metric-values/temperature/4
 
 # Get metric values
-curl -s http://localhost:8080/metric-values/temperature | jq
+curl -s $BASE_URL/metric-values/temperature | jq
 ```
 
 ## Redis Installation
@@ -51,17 +55,17 @@ Deployed to Heroku at [metrics-api-server-63ea51367e93.herokuapp.com](https://me
 # Create Heroku app
 heroku apps:create --region eu metrics-api-server
 
+# Add Redis Cloud addon
+heroku addons:create rediscloud:30 -a metrics-api-server
+
 # Use a remote with a unique name within this repo
 heroku git:remote -a metrics-api-server -r heroku-api-server
 
 # Deploy only the api-server sub directory to Heroku
 git subtree push --prefix api-server heroku-api-server main
 
-# Smoke test API on Heroku
-curl https://metrics-api-server-63ea51367e93.herokuapp.com/ping | jq
-
-# Add Redis Cloud addon
-heroku addons:create rediscloud:30 -a metrics-api-server
+# Check API is up on Heroku
+curl -s https://metrics-api-server-63ea51367e93.herokuapp.com/ping | jq
 
 # Various useful Heroku commands
 heroku logs --tail -a metrics-api-server

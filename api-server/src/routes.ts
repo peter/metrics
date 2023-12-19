@@ -27,7 +27,7 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
   }
   server.get('/ping', pingOptions, async () => {
     return {
-        pong: 'it worked!',
+        status: 'OK',
         HEROKU_RELEASE_CREATED_AT: process.env.HEROKU_RELEASE_CREATED_AT,
         HEROKU_RELEASE_COMMIT: process.env.HEROKU_RELEASE_COMMIT
     }
@@ -60,7 +60,13 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
       }
     }
     const rangeResponse = await redisClient.ts.range(key, fromTimestamp, toTimestamp, rangeOptions);
-    reply.send({ rangeResponse })
+    const result = {
+      fromTimestamp,
+      toTimestamp,
+      rangeOptions,
+      rangeResponse,
+    }
+    reply.send(result)
   })
 
   server.put('/metric-values/:key/:value', {}, async (req, reply) => {
