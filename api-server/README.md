@@ -25,8 +25,9 @@ export BASE_URL=$LOCAL_BASE_URL
 # Create metric
 curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperature"}}' $BASE_URL/metrics
 
-# Set metric value
+# Set metric values
 curl -X PUT $BASE_URL/metric-values/temperature/4
+curl -X PUT $BASE_URL/metric-values/temperature/-5
 
 # Get metric value (gets last value by default)
 curl -s $BASE_URL/metric-values/temperature | jq

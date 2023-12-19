@@ -73,8 +73,9 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
     const { key, value } = req.params as any
     const currentTime = Date.now()
     await redisClient.ts.add(key, currentTime, value);
-    // TODO: PUBLISH pub/sub notification that metric value has changed (to be picked up by websocket-server)
     const metric = { key: key, value }
+    // publish pub/sub notification that metric value has changed - to be picked up by websocket-server
+    await redisClient.publish('metrics:notifications', JSON.stringify({ metric }));
     reply.send({ metric })
   })
 }
