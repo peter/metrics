@@ -40,4 +40,4 @@ heroku run printenv -a metrics-websocket-server
 ## Resources
 
 * [ws - Node.js websocket package](https://github.com/websockets/ws)
-* [Heroku Node Getting Started Example App](git@github.com:heroku/node-js-getting-started.git)
+* [Heroku Node Getting Started Example App](https://github.com/heroku/node-js-getting-started)
