@@ -27,7 +27,8 @@ heroku git:remote -a metrics-api-server -r heroku-api-server
 # Deploy only the api-server sub directory to Heroku
 git subtree push --prefix api-server heroku-api-server main
 
-# Smoke test websocket on Heroku by opening test/index.html?heroku=true in your browser
+# Smoke test API on Heroku
+curl https://metrics-api-server-63ea51367e93.herokuapp.com/ping
 
 # Various useful Heroku commands
 heroku logs --tail -a metrics-api-server
