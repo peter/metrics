@@ -21,15 +21,7 @@ PUBLISH metrics:notifications  "{\"myMetric\":123}"
 
 ## Redis Installation
 
-You can [install Redis](https://redis.io/docs/install/install-redis/install-redis-on-mac-os/) on Mac with `brew install redis` or use Docker:
-
-```sh
-# Start server
-docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
-
-# Run redis cli
-docker exec -it redis-stack-server redis-cli
-```
+See [api-server README](../api-server/README.md)
 
 ## Deployment
 
