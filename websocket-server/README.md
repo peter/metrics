@@ -6,11 +6,29 @@
 # Install dependencies
 npm install
 
+# Install Redis (see below) and start it on the default port - 6379
+
 # Start local server with hot reload
 npm run dev
 
 # Smoke test websocket connection
 open test/index.html
+
+# Smoke test the Redis pub/sub notification
+redis-cli
+PUBLISH metrics:notifications  "{\"myMetric\":123}"
+```
+
+## Redis Installation
+
+You can [install Redis](https://redis.io/docs/install/install-redis/install-redis-on-mac-os/) on Mac with `brew install redis` or use Docker:
+
+```sh
+# Start server
+docker run -it --rm --name redis-server -p 6379:6379 redis
+
+# Run redis cli
+docker exec -it redis-server redis-cli
 ```
 
 ## Deployment
@@ -40,4 +58,5 @@ heroku run printenv -a metrics-websocket-server
 ## Resources
 
 * [ws - Node.js websocket package](https://github.com/websockets/ws)
+* [redis - Node.js redis package](https://github.com/redis/node-redis)
 * [Heroku Node Getting Started Example App](https://github.com/heroku/node-js-getting-started)

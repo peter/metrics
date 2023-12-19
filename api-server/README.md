@@ -6,6 +6,8 @@
 # Install dependencies
 npm install
 
+# Install Redis (see below) and start it on the default port - 6379
+
 # Start local server with hot reload
 npm run dev
 
@@ -13,9 +15,9 @@ npm run dev
 curl http://localhost:8080/ping
 ```
 
-## Redis
+## Redis Installation
 
-Running with Docker:
+You can [install Redis](https://redis.io/docs/install/install-redis/install-redis-on-mac-os/) on Mac with `brew install redis` or use Docker:
 
 ```sh
 # Start server
@@ -40,7 +42,10 @@ heroku git:remote -a metrics-api-server -r heroku-api-server
 git subtree push --prefix api-server heroku-api-server main
 
 # Smoke test API on Heroku
-curl https://metrics-api-server-63ea51367e93.herokuapp.com/ping
+curl https://metrics-api-server-63ea51367e93.herokuapp.com/ping | jq
+
+# Add Redis Cloud addon
+heroku addons:create rediscloud:30 -a metrics-api-server
 
 # Various useful Heroku commands
 heroku logs --tail -a metrics-api-server
