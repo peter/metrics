@@ -25,6 +25,7 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
         }
       }
   }
+  // Server ping
   server.get('/ping', pingOptions, async () => {
     return {
         status: 'OK',
@@ -32,19 +33,28 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
         HEROKU_RELEASE_COMMIT: process.env.HEROKU_RELEASE_COMMIT
     }
   })
-  
+
+  // List metrics
+  server.get('/metrics', {}, async (req, reply) => {
+    const metrics = await redisClient.sendCommand(['TS.QUERYINDEX', "category=all"]);
+    reply.send({ metrics })
+  })
+
+  // Create metric
   server.post('/metrics', {}, async (req, reply) => {
     const { metric } = req.body as any
-
-    await redisClient.ts.create(metric.key, {
-      RETENTION,
-      ENCODING: TimeSeriesEncoding.UNCOMPRESSED, // No compression - When not specified, the option is set to COMPRESSED
-      DUPLICATE_POLICY: TimeSeriesDuplicatePolicies.BLOCK, // No duplicates - When not specified: set to the global DUPLICATE_POLICY configuration of the database (which by default, is BLOCK).
-    });
-
+    await redisClient.sendCommand(['TS.CREATE', metric.key, 'RETENTION', String(RETENTION), 'LABELS', "category", "all", "name", metric.name]);
     reply.send({ metric })
   })
 
+  // Delete metric
+  server.delete('/metrics/:key', {}, async (req, reply) => {
+    const { key } = req.params as any
+    const result = await redisClient.sendCommand(['DEL', key]);
+    reply.send({ result })
+  })
+
+  // Get metric value
   server.get('/metric-values/:key', {}, async (req, reply) => {
     const { key } = req.params as any
     // TODO: Supported aggregations: ["COUNT", "MIN", "MAX", "AVG", "SUM", "FIRST", "LAST"]
@@ -69,6 +79,7 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
     reply.send(result)
   })
 
+  // Add metric value
   server.put('/metric-values/:key/:value', {}, async (req, reply) => {
     const { key, value } = req.params as any
     const currentTime = Date.now()
