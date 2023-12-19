@@ -18,11 +18,14 @@ curl http://localhost:8080/ping
 ## Invoking the API with Curl
 
 ```sh
-# Set value
-curl -X PUT http://localhost:8080/metrics/temp/4
+# Create metric
+curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperature"}}' http://localhost:8080/metrics
 
-# Get value
-curl http://localhost:8080/metrics/temp
+# Set metric value
+curl -X PUT http://localhost:8080/metric-values/temperature/4
+
+# Get metric values
+curl -s http://localhost:8080/metric-values/temperature | jq
 ```
 
 ## Redis Installation
@@ -30,11 +33,14 @@ curl http://localhost:8080/metrics/temp
 You can [install Redis](https://redis.io/docs/install/install-redis/install-redis-on-mac-os/) on Mac with `brew install redis` or use Docker:
 
 ```sh
-# Start server
-docker run -it --rm --name redis-server -p 6379:6379 redis
+# Start server in the terminal interactively
+docker run -it --rm --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
+
+# Start server in the backround
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
 
 # Run redis cli
-docker exec -it redis-server redis-cli
+docker exec -it redis-stack-server redis-cli
 ```
 
 ## Deployment
@@ -70,6 +76,8 @@ heroku restart -a metrics-api-server
 ## Resources
 
 * [fastify - Node.js web framework](https://fastify.dev)
+* [@redis/time-series package](https://www.npmjs.com/package/@redis/time-series)
 * [Heroku Node Getting Started Example App](https://github.com/heroku/node-js-getting-started)
+* [Redis Stack on Docker](https://redis.io/docs/install/install-stack/docker/)
 * [Heroku Redis Cloud Addon](https://elements.heroku.com/addons/rediscloud)
 * [How to Create Notification Services with Redis, Websockets, and Vue.js](https://redis.com/blog/how-to-create-notification-services-with-redis-websockets-and-vue-js/)

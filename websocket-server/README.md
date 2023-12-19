@@ -25,10 +25,10 @@ You can [install Redis](https://redis.io/docs/install/install-redis/install-redi
 
 ```sh
 # Start server
-docker run -it --rm --name redis-server -p 6379:6379 redis
+docker run -d --name redis-stack-server -p 6379:6379 redis/redis-stack-server:latest
 
 # Run redis cli
-docker exec -it redis-server redis-cli
+docker exec -it redis-stack-server redis-cli
 ```
 
 ## Deployment

@@ -1,4 +1,8 @@
 import { FastifyInstance, RouteShorthandOptions } from 'fastify'
+import { TimeSeriesDuplicatePolicies, TimeSeriesEncoding, TimeSeriesAggregationType } from '@redis/time-series';
+
+const N_DAYS_RETENTION = 90
+const RETENTION = N_DAYS_RETENTION * 24 * 3600 * 1000  // milliseconds
 
 export async function addRoutes(server: FastifyInstance, redisClient: any) {
   const pingOptions: RouteShorthandOptions = {
@@ -29,37 +33,41 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
     }
   })
   
-  const getMetricOptions: RouteShorthandOptions = {
-    schema: {
-      response: {
-        200: {
-          type: 'object',
-          properties: {
-            metric: {
-              type: 'object',
-              properties: {
-                key: { type: 'string', },
-                value: { type: 'string', },
-              },
-              required: ['key', 'value'],
-              additionalProperties: false
-            },
-          }
-        }
-      }
-    }
-  }
+  server.post('/metrics', {}, async (req, reply) => {
+    const { metric } = req.body as any
 
-  server.get('/metrics/:key', getMetricOptions, async (req, reply) => {
-    const { key } = req.params as any
-    const value = await redisClient.get(key)
-    const metric = { key: key, value }
+    await redisClient.ts.create(metric.key, {
+      RETENTION,
+      ENCODING: TimeSeriesEncoding.UNCOMPRESSED, // No compression - When not specified, the option is set to COMPRESSED
+      DUPLICATE_POLICY: TimeSeriesDuplicatePolicies.BLOCK, // No duplicates - When not specified: set to the global DUPLICATE_POLICY configuration of the database (which by default, is BLOCK).
+    });
+
     reply.send({ metric })
   })
 
-  server.put('/metrics/:key/:value', getMetricOptions, async (req, reply) => {
+  server.get('/metric-values/:key', {}, async (req, reply) => {
+    const { key } = req.params as any
+    // TODO: Supported aggregations: ["COUNT", "MIN", "MAX", "AVG", "SUM", "FIRST", "LAST"]
+    const { aggregation = "LAST" } = req.query as any
+
+    const fromTimestamp = Date.now() - RETENTION
+    const toTimestamp = Date.now()
+
+    const rangeOptions = {
+      AGGREGATION: {
+        type: aggregation,
+        timeBucket: RETENTION
+      }
+    }
+    const rangeResponse = await redisClient.ts.range(key, fromTimestamp, toTimestamp, rangeOptions);
+    reply.send({ rangeResponse })
+  })
+
+  server.put('/metric-values/:key/:value', {}, async (req, reply) => {
     const { key, value } = req.params as any
-    await redisClient.set(key, value)
+    const currentTime = Date.now()
+    await redisClient.ts.add(key, currentTime, value);
+    // TODO: PUBLISH pub/sub notification that metric value has changed (to be picked up by websocket-server)
     const metric = { key: key, value }
     reply.send({ metric })
   })
