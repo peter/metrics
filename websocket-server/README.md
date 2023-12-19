@@ -45,7 +45,14 @@ heroku git:remote -a metrics-websocket-server -r heroku-websocket-server
 # Deploy only the websocket-server sub directory to Heroku
 git subtree push --prefix websocket-server heroku-websocket-server main
 
+# Set the Redis URL (shared with api-server)
+heroku config:set REDISCLOUD_URL=$(heroku config:get REDISCLOUD_URL -a metrics-api-server) -a metrics-websocket-server
+
 # Smoke test websocket on Heroku by opening test/index.html?heroku=true in your browser
+
+# Smoke test the Redis connection
+redis-cli -u $(heroku config:get REDISCLOUD_URL -a metrics-api-server)
+PUBLISH metrics:notifications  "{\"myMetric\":123}"
 
 # Various useful Heroku commands
 heroku logs --tail -a metrics-websocket-server
