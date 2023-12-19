@@ -6,7 +6,8 @@
     "postinstall": "npm run build"
   },
   "dependencies": {
-    "fastify": "^4.25.1"
+    "fastify": "^4.25.1",
+    "redis": "^4.6.12"
   },
   "devDependencies": {
     "@types/node": "^20.10.5",

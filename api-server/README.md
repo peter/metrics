@@ -15,6 +15,16 @@ npm run dev
 curl http://localhost:8080/ping
 ```
 
+## Invoking the API with Curl
+
+```sh
+# Set value
+curl -X PUT http://localhost:8080/metrics/temp/4
+
+# Get value
+curl http://localhost:8080/metrics/temp
+```
+
 ## Redis Installation
 
 You can [install Redis](https://redis.io/docs/install/install-redis/install-redis-on-mac-os/) on Mac with `brew install redis` or use Docker:
