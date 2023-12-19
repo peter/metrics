@@ -21,7 +21,7 @@ PUBLISH metrics:notifications  "{\"myMetric\":123}"
 
 ## Redis Installation
 
-See [api-server README](../api-server/README.md)
+See [api-server README](../api-server/README.md#redis-installation)
 
 ## Deployment
 
