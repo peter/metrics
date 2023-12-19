@@ -28,8 +28,13 @@ curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperatur
 # Set metric value
 curl -X PUT $BASE_URL/metric-values/temperature/4
 
-# Get metric values
+# Get metric value (gets last value by default)
 curl -s $BASE_URL/metric-values/temperature | jq
+
+# Get min/max/average metric value
+curl -s $BASE_URL/metric-values/temperature?aggregation=MIN | jq
+curl -s $BASE_URL/metric-values/temperature?aggregation=MAX | jq
+curl -s $BASE_URL/metric-values/temperature?aggregation=AVG | jq
 ```
 
 ## Redis Installation
