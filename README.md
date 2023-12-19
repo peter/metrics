@@ -1,6 +1,6 @@
-# metrics
+# Metrics Dashboard Example
 
-A simple example of a Metrics Dashboard implemented in Node.js and consisting of three parts:
+A simple example of a metrics dashboard implemented in Node.js and consisting of three parts:
 
 * [Dashboard web app](dashboard)
 * [REST API server](api-server)
