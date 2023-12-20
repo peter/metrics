@@ -1,26 +1,12 @@
 import WebSocket, { WebSocketServer } from 'ws';
-import { createClient } from 'redis'
-
-const REDIS_URL = process.env.REDISCLOUD_URL || "redis://localhost:6379"
+import * as redis from './redis'
 
 type WebsocketServerOptions = {
     port: number;
     path: string;
 }
 
-export async function start(options: WebsocketServerOptions) {
-  const redisOptions = {
-    url: REDIS_URL
-  };
-  console.log('connecting to redis...', redisOptions)
-  const redisClient = await createClient(redisOptions)
-    .on('error', err => console.log('Redis Client Error', err.stack || err))
-    .connect();
-  redisClient.subscribe('metrics:notifications', (message, channel) => {
-    const messageData = JSON.parse(message)
-    console.log(`redisClient received message on channel ${channel}`, messageData)
-  });
-  
+export async function start(options: WebsocketServerOptions) {  
   const wss = new WebSocketServer({
       port: options.port,
       path: options.path,
@@ -44,15 +30,21 @@ export async function start(options: WebsocketServerOptions) {
         // should not be compressed if context takeover is disabled.
       }
     });
-    
-    wss.on('connection', function connection(ws) {
-        ws.on('error', console.error);
-      
+
+    const redisClient = await redis.connect()
+
+    redisClient.subscribe('metrics:notifications', (message, channel) => {
+      const messageData = JSON.parse(message)
+      console.log(`redisClient received message on channel ${channel}`, messageData)
+      for (const client of wss.clients) {
+        client.send(message)
+      }
+    });                  
+
+    wss.on('connection', (ws) => {
+        ws.on('error', console.error);      
         ws.on('message', function message(data) {
           console.log('received: %s', data);
         });
-      
-        const message = { ping: true }
-        ws.send(JSON.stringify(message));
     });      
 }
