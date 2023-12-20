@@ -28,9 +28,11 @@ curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperatur
 # List metrics
 curl -s $BASE_URL/metrics | jq
 
-# Set metric values
+# Add metric values
 curl -X PUT $BASE_URL/metric-values/temperature/4
 curl -X PUT $BASE_URL/metric-values/temperature/-5
+# Add metric value for a past timestamp (milliseconds since epoch)
+curl -X PUT "$BASE_URL/metric-values/temperature/23?timestamp=1703059808739" | jq
 
 # Get metric value (gets last value by default and for the full 90 day retention period)
 curl -s $BASE_URL/metric-values/temperature | jq

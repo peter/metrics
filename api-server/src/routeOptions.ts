@@ -71,5 +71,12 @@ export const addMetricValue: RouteShorthandOptions = {
       required: ['key', 'value'],
       additionalProperties: false
     },
+    querystring: {
+      type: 'object',
+      properties: {
+        timestamp: { type: 'number', },
+      },
+      additionalProperties: false
+    }
   },
 }

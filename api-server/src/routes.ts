@@ -45,7 +45,8 @@ export async function addRoutes(server: FastifyInstance) {
 
   // Add metric value
   server.put('/metric-values/:key/:value', routeOptions.addMetricValue, async (req, reply) => {
-    const { key, value, timestamp = Date.now() } = req.params as any
+    const { key, value } = req.params as any
+    const { timestamp = Date.now() } = req.query as any
     const result = await metricValueModel.addValue(key, value, timestamp)
     const metric = { key, value }
     reply.send({ metric, result })
