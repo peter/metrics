@@ -79,6 +79,9 @@ git subtree push --prefix api-server heroku-api-server main
 # Check API is up on Heroku
 curl -s https://metrics-api-server-63ea51367e93.herokuapp.com/ping | jq
 
+# Smoke test the Redis connection
+redis-cli -u $(heroku config:get REDISCLOUD_URL -a metrics-api-server)
+
 # Various useful Heroku commands
 heroku logs --tail -a metrics-api-server
 heroku ps -a metrics-api-server

@@ -42,9 +42,13 @@ export async function start(options: WebsocketServerOptions) {
     });                  
 
     wss.on('connection', (ws) => {
-        ws.on('error', console.error);      
-        ws.on('message', function message(data) {
-          console.log('received: %s', data);
-        });
+      console.log(`New websocket connection wss.clients.length=${wss.clients?.size}`)
+      ws.on('error', console.error);      
+      ws.on('message', function message(data) {
+        console.log('received: %s', data);
+      });
+      ws.on('close', () => {
+        console.log(`Websocket closed wss.clients.length=${wss.clients?.size}`)
+      })
     });      
 }
