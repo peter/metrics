@@ -1,4 +1,4 @@
-# Metrics Dashboard Example
+# Metrics Dashboard
 
 A simple example of a metrics dashboard implemented in Node.js and consisting of three parts:
 

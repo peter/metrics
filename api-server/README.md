@@ -29,8 +29,10 @@ curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperatur
 curl -X PUT $BASE_URL/metric-values/temperature/4
 curl -X PUT $BASE_URL/metric-values/temperature/-5
 
-# Get metric value (gets last value by default)
+# Get metric value (gets last value by default and for the full 90 day retention period)
 curl -s $BASE_URL/metric-values/temperature | jq
+# Get average values in buckets of one hour
+curl -s "$BASE_URL/metric-values/temperature?aggregation=AVG&timeBucket=3600000" | jq
 
 # Get min/max/average metric value
 curl -s $BASE_URL/metric-values/temperature?aggregation=MIN | jq

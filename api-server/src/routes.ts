@@ -1,32 +1,13 @@
 import { FastifyInstance, RouteShorthandOptions } from 'fastify'
 import { TimeSeriesDuplicatePolicies, TimeSeriesEncoding, TimeSeriesAggregationType } from '@redis/time-series';
+import * as routeOptions from './routeOptions'
 
 const N_DAYS_RETENTION = 90
 const RETENTION = N_DAYS_RETENTION * 24 * 3600 * 1000  // milliseconds
 
 export async function addRoutes(server: FastifyInstance, redisClient: any) {
-  const pingOptions: RouteShorthandOptions = {
-      schema: {
-        response: {
-          200: {
-            type: 'object',
-            properties: {
-              pong: {
-                type: 'string'
-              },
-              HEROKU_RELEASE_CREATED_AT: {
-                  type: 'string'
-              },
-              HEROKU_RELEASE_COMMIT: {
-                  type: 'string'
-              }
-            }
-          }
-        }
-      }
-  }
   // Server ping
-  server.get('/ping', pingOptions, async () => {
+  server.get('/ping', {}, async () => {
     return {
         status: 'OK',
         HEROKU_RELEASE_CREATED_AT: process.env.HEROKU_RELEASE_CREATED_AT,
@@ -36,14 +17,14 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
 
   // List metrics
   server.get('/metrics', {}, async (req, reply) => {
-    const metrics = await redisClient.sendCommand(['TS.QUERYINDEX', "category=all"]);
+    const metrics = await redisClient.sendCommand(['TS.QUERYINDEX', "all=all"]);
     reply.send({ metrics })
   })
 
   // Create metric
-  server.post('/metrics', {}, async (req, reply) => {
+  server.post('/metrics', routeOptions.createMetric, async (req, reply) => {
     const { metric } = req.body as any
-    await redisClient.sendCommand(['TS.CREATE', metric.key, 'RETENTION', String(RETENTION), 'LABELS', "category", "all", "name", metric.name]);
+    await redisClient.sendCommand(['TS.CREATE', metric.key, 'RETENTION', String(RETENTION), 'LABELS', "all", "all"]);
     reply.send({ metric })
   })
 
@@ -54,11 +35,11 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
     reply.send({ result })
   })
 
-  // Get metric value
-  server.get('/metric-values/:key', {}, async (req, reply) => {
+  // Get aggregated metric values. By default only returns one value but you can set timeBucket to return multiple values
+  server.get('/metric-values/:key', routeOptions.getMetricValue, async (req, reply) => {
     const { key } = req.params as any
     // TODO: Supported aggregations: ["COUNT", "MIN", "MAX", "AVG", "SUM", "FIRST", "LAST"]
-    const { aggregation = "LAST" } = req.query as any
+    const { aggregation = "LAST", timeBucket = RETENTION } = req.query as any
 
     const fromTimestamp = Date.now() - RETENTION
     const toTimestamp = Date.now()
@@ -66,14 +47,11 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
     const rangeOptions = {
       AGGREGATION: {
         type: aggregation,
-        timeBucket: RETENTION
+        timeBucket,
       }
     }
     const rangeResponse = await redisClient.ts.range(key, fromTimestamp, toTimestamp, rangeOptions);
     const result = {
-      fromTimestamp,
-      toTimestamp,
-      rangeOptions,
       rangeResponse,
     }
     reply.send(result)
