@@ -42,6 +42,9 @@ curl -s "$BASE_URL/metric-values/temperature?aggregation=AVG&timeBucket=3600000"
 curl -s $BASE_URL/metric-values/temperature?aggregation=MIN | jq
 curl -s $BASE_URL/metric-values/temperature?aggregation=MAX | jq
 curl -s $BASE_URL/metric-values/temperature?aggregation=AVG | jq
+
+# Get aggregated metric values (min/max/avg/count) for all metrics for dashboard
+curl -s $BASE_URL/metrics-dashboard | jq 
 ```
 
 ## Redis Installation

@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify'
 import * as routeOptions from './routeOptions'
 import * as metricModel from './models/metric'
 import * as metricValueModel from './models/metricValue'
+import * as metricDashboardModel from './models/metricDashboard'
 
 export async function addRoutes(server: FastifyInstance) {
   // Server ping
@@ -13,6 +14,12 @@ export async function addRoutes(server: FastifyInstance) {
     }
   })
 
+  // Get all metric / metric value needed for basic dashboard
+  server.get('/metrics-dashboard', {}, async (req, reply) => {
+    const metrics = await metricDashboardModel.getAll()
+    reply.send({ metrics })
+  })
+  
   // List metrics
   server.get('/metrics', {}, async (req, reply) => {
     const metrics = await metricModel.list()
