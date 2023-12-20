@@ -96,9 +96,13 @@ heroku restart -a metrics-api-server
 
 * [fastify - Node.js web framework](https://fastify.dev)
 * [@redis/time-series package](https://www.npmjs.com/package/@redis/time-series)
-* [Postgres/TimescaleDB - alternative to Redis (not used in this project)](https://github.com/timescale/timescaledb)
 * [Heroku Node Getting Started Example App](https://github.com/heroku/node-js-getting-started)
 * [Redis Time Series Commands](https://docs.redis.com/latest/stack/timeseries/commands/)
 * [Redis Stack on Docker](https://redis.io/docs/install/install-stack/docker/)
 * [Heroku Redis Cloud Addon](https://elements.heroku.com/addons/rediscloud)
 * [How to Create Notification Services with Redis, Websockets, and Vue.js](https://redis.com/blog/how-to-create-notification-services-with-redis-websockets-and-vue-js/)
+
+Alternative technologies and services not used in this project:
+
+* [TinyBird - hosted analytics/metrics service based on Clickhouse](https://www.tinybird.co)
+* [Postgres/TimescaleDB - alternative to Redis Time Series](https://github.com/timescale/timescaledb)
