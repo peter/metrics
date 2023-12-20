@@ -7,7 +7,7 @@ const redisOptions = {
     url: REDIS_URL
 };
 
-let redisClient: any;
+export let redisClient: any;
 
 export async function start() {
     console.log('connecting to redis...', redisOptions)

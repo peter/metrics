@@ -1,11 +1,9 @@
-import { FastifyInstance, RouteShorthandOptions } from 'fastify'
-import { TimeSeriesDuplicatePolicies, TimeSeriesEncoding, TimeSeriesAggregationType } from '@redis/time-series';
+import { FastifyInstance } from 'fastify'
 import * as routeOptions from './routeOptions'
+import * as metricModel from './models/metric'
+import * as metricValueModel from './models/metricValue'
 
-const N_DAYS_RETENTION = 90
-const RETENTION = N_DAYS_RETENTION * 24 * 3600 * 1000  // milliseconds
-
-export async function addRoutes(server: FastifyInstance, redisClient: any) {
+export async function addRoutes(server: FastifyInstance) {
   // Server ping
   server.get('/ping', {}, async () => {
     return {
@@ -17,54 +15,39 @@ export async function addRoutes(server: FastifyInstance, redisClient: any) {
 
   // List metrics
   server.get('/metrics', {}, async (req, reply) => {
-    const metrics = await redisClient.sendCommand(['TS.QUERYINDEX', "all=all"]);
+    const metrics = await metricModel.list()
     reply.send({ metrics })
   })
 
   // Create metric
   server.post('/metrics', routeOptions.createMetric, async (req, reply) => {
     const { metric } = req.body as any
-    await redisClient.sendCommand(['TS.CREATE', metric.key, 'RETENTION', String(RETENTION), 'LABELS', "all", "all"]);
+    await metricModel.create(metric.key)
     reply.send({ metric })
   })
 
   // Delete metric
   server.delete('/metrics/:key', {}, async (req, reply) => {
     const { key } = req.params as any
-    const result = await redisClient.sendCommand(['DEL', key]);
+    const result = await metricModel.remove(key)
     reply.send({ result })
   })
 
-  // Get aggregated metric values. By default only returns one value but you can set timeBucket to return multiple values
+  // Get aggregated metric values. By default only returns last value but you can set timeBucket to return multiple values
   server.get('/metric-values/:key', routeOptions.getMetricValue, async (req, reply) => {
     const { key } = req.params as any
-    // TODO: Supported aggregations: ["COUNT", "MIN", "MAX", "AVG", "SUM", "FIRST", "LAST"]
-    const { aggregation = "LAST", timeBucket = RETENTION } = req.query as any
-
-    const fromTimestamp = Date.now() - RETENTION
-    const toTimestamp = Date.now()
-
-    const rangeOptions = {
-      AGGREGATION: {
-        type: aggregation,
-        timeBucket,
-      }
-    }
-    const rangeResponse = await redisClient.ts.range(key, fromTimestamp, toTimestamp, rangeOptions);
-    const result = {
+    const { aggregation = "LAST", timeBucket = metricModel.RETENTION } = req.query as any
+    const rangeResponse = await metricValueModel.getAggregatedValues(key, aggregation, timeBucket)
+    reply.send({
       rangeResponse,
-    }
-    reply.send(result)
+    })
   })
 
   // Add metric value
-  server.put('/metric-values/:key/:value', {}, async (req, reply) => {
-    const { key, value } = req.params as any
-    const currentTime = Date.now()
-    await redisClient.ts.add(key, currentTime, value);
-    const metric = { key: key, value }
-    // publish pub/sub notification that metric value has changed - to be picked up by websocket-server
-    await redisClient.publish('metrics:notifications', JSON.stringify({ metric }));
-    reply.send({ metric })
+  server.put('/metric-values/:key/:value', routeOptions.addMetricValue, async (req, reply) => {
+    const { key, value, timestamp = Date.now() } = req.params as any
+    const result = await metricValueModel.addValue(key, value, timestamp)
+    const metric = { key, value }
+    reply.send({ metric, result })
   })
 }

@@ -59,3 +59,17 @@ export const getMetricValue: RouteShorthandOptions = {
       }      
     },
 }
+
+export const addMetricValue: RouteShorthandOptions = {
+  schema: {
+    params: {
+      type: 'object',
+      properties: {
+        key: { type: 'string' },
+        value: { type: 'number' },
+      },
+      required: ['key', 'value'],
+      additionalProperties: false
+    },
+  },
+}
