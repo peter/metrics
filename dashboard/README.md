@@ -28,9 +28,14 @@ npm run preview
 
 ```sh
 npm i -g vercel
+
+# Preview/stage deploy
 vercel
 # Inspect: https://vercel.com/peter1/metrics-dashboard/4qqBnXQyYn3naGH9nPk2G9RZsJof
 # Preview: https://metrics-dashboard-izcr4f767-peter1.vercel.app
+
+# Production deploy
+vercel --prod
 ```
 
 ## Heroku Deployment (Abandoned)
