@@ -15,7 +15,7 @@ npm run dev
 open http://localhost:3000
 ```
 
-## Deployment
+## Preview Build Locally
 
 You can locally build to dist folder and preview:
 
@@ -24,19 +24,40 @@ npm run build
 npm run preview
 ```
 
-Heroku deployment:
+## Vercel Deployment
+
+```sh
+npm i -g vercel
+vercel init vite
+cd vite
+vercel
+# Inspect: https://vercel.com/peter1/metrics-dashboard/BhFhjGTAL3ghNQ6pPvGxPL74a4nh
+# Preview: https://metrics-dashboard-6twiq8u1w-peter1.vercel.app
+```
+
+## Heroku Deployment (Abandoned)
 
 ```sh
 heroku apps:create --region eu metrics-web-dashboard
 
-heroku buildpacks:set -a metrics-web-dashboard https://github.com/heroku/heroku-buildpack-static.git
+heroku buildpacks:set -a metrics-web-dashboard heroku-community/nginx
 
 heroku git:remote -a metrics-web-dashboard -r heroku-dashboard
 
 git subtree push --prefix dashboard heroku-dashboard main
+
+heroku info -a metrics-web-dashboard
+
+open https://metrics-web-dashboard-b872acac8046.herokuapp.com
+
+heroku logs --tail -a metrics-web-dashboard
+
+# Problem: not support on Heroku 22 stack. Next.js recommended.
 ```
 
 ## Resources
 
 * [How to add Tailwindcss to Vite React App](https://tailwindcss.com/docs/guides/vite)
+* [Vercel deploy](https://v2.vitejs.dev/guide/static-deploy.html#vercel-cli)
 * [Heroku deploy](https://v2.vitejs.dev/guide/static-deploy.html#heroku)
+* [Heroku Buildpacks](https://github.com/mars/create-react-app-buildpack?tab=readme-ov-file)
