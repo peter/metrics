@@ -27,9 +27,13 @@ npm run preview
 Heroku deployment:
 
 ```sh
-heroku apps:create --region eu metrics-dashboard
+heroku apps:create --region eu metrics-web-dashboard
 
-heroku buildpacks:set -a metrics-dashboard https://github.com/heroku/heroku-buildpack-static.git
+heroku buildpacks:set -a metrics-web-dashboard https://github.com/heroku/heroku-buildpack-static.git
+
+heroku git:remote -a metrics-web-dashboard -r heroku-dashboard
+
+git subtree push --prefix dashboard heroku-dashboard main
 ```
 
 ## Resources
