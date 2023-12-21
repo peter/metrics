@@ -16,5 +16,5 @@ The API and Websocket servers are deployed to Heroku with the Redis Cloud addon.
 
 A demo app is deployed to Heroku and Vercel:
 
-* [Web Dashboard](https://metrics-dashboard-izcr4f767-peter1.vercel.app/)
+* [Web Dashboard](https://metrics-dashboard-7lgdhdfot-peter1.vercel.app/)
 * [API server docs](https://metrics-api-server-63ea51367e93.herokuapp.com/docs)
