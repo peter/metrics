@@ -2,7 +2,7 @@
 
 A simple example of a metrics dashboard implemented in Node.js and consisting of three parts:
 
-* TODO: Dashboard web app
+* [Web Dashboard](dashboard/README.md)
 * [REST API server](api-server/README.md)
 * [Websocket server](websocket-server/README.md)
 
