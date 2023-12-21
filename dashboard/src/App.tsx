@@ -13,10 +13,10 @@ function useNoRenderRef(currentValue: any) {
 }
 
 function App() {
-  const useHeroku = Boolean(new URLSearchParams(window.location.search).get('heroku'))
+  const isProduction = window.location.href.includes('vercel.app') || window.location.href.includes('herokuapp.com')
 
   // API
-  const API_BASE_URL = useHeroku ? "https://metrics-api-server-63ea51367e93.herokuapp.com" : "http://localhost:8080"
+  const API_BASE_URL = isProduction ? "https://metrics-api-server-63ea51367e93.herokuapp.com" : "http://localhost:8080"
   const API_URL = `${API_BASE_URL}/metrics-dashboard`
   const [metrics, setMetrics] = useState(null);
   const metricsNoRenderRef = useNoRenderRef(metrics);
@@ -29,7 +29,7 @@ function App() {
   }, [API_URL]);
   
   // Websocket
-  const WS_URL = useHeroku ? "wss://metrics-websocket-server-094fe427096d.herokuapp.com/ws" : "ws://localhost:3001/ws"
+  const WS_URL = isProduction ? "wss://metrics-websocket-server-094fe427096d.herokuapp.com/ws" : "ws://localhost:3001/ws"
   const { lastMessage, readyState } = useWebSocket(WS_URL);
   useEffect(() => {
     const metrics: any = metricsNoRenderRef.current;
