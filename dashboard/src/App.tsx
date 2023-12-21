@@ -38,8 +38,10 @@ function App() {
   console.log('pm debug metrics', metrics);
 
   return (
-    <div>
-      <h1>Metrics Dashboard</h1>
+    <div className="p-10">
+      <h1 className="mb-4 text-4xl font-extrabold leading-none tracking-tight text-gray-900 md:text-5xl lg:text-6xl dark:text-white">
+        Metrics Dashboard
+      </h1>
 
       {readyState !== ReadyState.OPEN && <span>WebSocket status: {connectionStatusPretty}</span>}
 
