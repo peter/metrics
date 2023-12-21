@@ -15,13 +15,13 @@ export async function addRoutes(server: FastifyInstance) {
   })
 
   // Get all metric / metric value needed for basic dashboard
-  server.get('/metrics-dashboard', {}, async (req, reply) => {
+  server.get('/metrics-dashboard', routeOptions.metricsDashboard, async (req, reply) => {
     const metrics = await metricDashboardModel.getAll()
     reply.send({ metrics })
   })
   
   // List metrics
-  server.get('/metrics', {}, async (req, reply) => {
+  server.get('/metrics', routeOptions.listMetrics, async (req, reply) => {
     const metrics = await metricModel.list()
     reply.send({ metrics })
   })
@@ -34,7 +34,7 @@ export async function addRoutes(server: FastifyInstance) {
   })
 
   // Delete metric
-  server.delete('/metrics/:key', {}, async (req, reply) => {
+  server.delete('/metrics/:key', routeOptions.deleteMetric, async (req, reply) => {
     const { key } = req.params as any
     const result = await metricModel.remove(key)
     reply.send({ result })

@@ -15,12 +15,19 @@ npm run dev
 curl http://localhost:8080/ping
 ```
 
+## API Docs
+
+Basic (but incomplete) OpenAPI docs is available under `/docs`
+
 ## Invoking the API with Curl
 
 ```sh
 export LOCAL_BASE_URL=http://localhost:8080
 export PRODUCTION_BASE_URL=https://metrics-api-server-63ea51367e93.herokuapp.com
 export BASE_URL=$LOCAL_BASE_URL
+
+# Get OpenAPI Docs
+open $BASE_URL/docs
 
 # Create metric
 curl -X POST -H 'Content-Type:application/json' -d '{"metric":{"key":"temperature"}}' $BASE_URL/metrics
@@ -98,6 +105,7 @@ heroku restart -a metrics-api-server
 ## Resources
 
 * [fastify - Node.js web framework](https://fastify.dev)
+* [@fastify/swagger - OpenAPI for Fastify](https://github.com/fastify/fastify-swagger)
 * [@redis/time-series package](https://www.npmjs.com/package/@redis/time-series)
 * [Heroku Node Getting Started Example App](https://github.com/heroku/node-js-getting-started)
 * [Redis Time Series Commands](https://docs.redis.com/latest/stack/timeseries/commands/)

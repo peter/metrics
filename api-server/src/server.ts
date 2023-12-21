@@ -1,7 +1,8 @@
-import Fastify, { FastifyInstance, RouteShorthandOptions } from 'fastify'
+import Fastify, { FastifyInstance } from 'fastify'
 import { addRoutes } from './routes'
 import * as redis from './redis'
 import cors from '@fastify/cors'
+import * as openapi from './openapi'
 
 export const start = async (port: number) => {
   try {
@@ -9,8 +10,12 @@ export const start = async (port: number) => {
     const server: FastifyInstance = Fastify({
       logger: true
     })
-    await server.register(cors, {})    
-    addRoutes(server)
+    await server.register(cors, {})
+    openapi.setup(server)    
+    server.register((server, _options, done) => {
+      addRoutes(server)
+      done()
+    })
     const host = '0.0.0.0'
     await server.listen({ port, host })
   } catch (err: any) {
