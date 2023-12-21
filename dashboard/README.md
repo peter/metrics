@@ -28,11 +28,9 @@ npm run preview
 
 ```sh
 npm i -g vercel
-vercel init vite
-cd vite
 vercel
-# Inspect: https://vercel.com/peter1/metrics-dashboard/BhFhjGTAL3ghNQ6pPvGxPL74a4nh
-# Preview: https://metrics-dashboard-6twiq8u1w-peter1.vercel.app
+# Inspect: https://vercel.com/peter1/metrics-dashboard/4qqBnXQyYn3naGH9nPk2G9RZsJof
+# Preview: https://metrics-dashboard-izcr4f767-peter1.vercel.app
 ```
 
 ## Heroku Deployment (Abandoned)
